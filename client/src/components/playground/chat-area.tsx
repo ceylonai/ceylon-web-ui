@@ -123,14 +123,14 @@ const ChatArea: React.FC = () => {
             {/* Message Input */}
             <div>
             <form onSubmit={handleSubmit} className="bg-gray-900 p-4 flex gap-2 rounded-lg">
-                    <Button type="button" variant="ghost" size="icon">
-                        <Paperclip className="w-5 h-5 text-gray-400"/>
+                    <Button type="button" variant="ghost" size="icon" >
+                        <Paperclip className="w-5 h-5 text-white  border-white-800"/>
                     </Button>
                     <Input
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         placeholder="Type a message..."
-                        className="flex-1 bg-transparent border-gray-800"
+                        className="flex-1 bg-transparent border-gray-800 text-white"
                         disabled={!socket?.connected}
                     />
                     <Button type="submit" disabled={!socket?.connected || !inputMessage.trim()}>
