@@ -1,18 +1,14 @@
 import asyncio
 import dataclasses
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import socketio
-
-## Ceylon imports
-from ceylon import Admin, Worker, AgentDetail, on
-
+from ceylon import Worker, AgentDetail, on
+from app.agents.agents import admin, worker_1, worker_2, worker_3
 
 @dataclasses.dataclass
 class HumanInput:
     content: str
-
 
 class HumanAgent(Worker):
 
@@ -27,11 +23,6 @@ class HumanAgent(Worker):
             "message": data.content
         })
 
-
-admin = Admin("admin", 7446)
-worker_1 = Worker("worker_1", "worker")
-worker_2 = Worker("worker_2", "worker")
-worker_3 = Worker("worker_3", "worker")
 human_interface = HumanAgent("human_interface", "human")
 
 # Initialize FastAPI
@@ -138,7 +129,6 @@ async def on_message_1(data, sender: AgentDetail, time):
                         {"username": worker_1.details().name,
                         "message": f'Message From {worker_1.details().name} - {data["message"]}'})
 
-
 @worker_2.on(dict)
 async def on_message_2(data, sender: AgentDetail, time):
     await asyncio.sleep(2)
@@ -147,7 +137,6 @@ async def on_message_2(data, sender: AgentDetail, time):
     await sio.emit("response",
                    {"username": worker_2.details().name,
                     "message": f'Message From {worker_2.details().name} - {data["message"]}'})
-
 
 if __name__ == '__main__':
     import uvicorn
