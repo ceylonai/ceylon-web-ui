@@ -14,7 +14,7 @@ A real-time chat application built with FastAPI, Ceylon, Socket.IO, and Next.js 
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ceylonai/ceylon-web-ui.git
 cd ceylon-web-ui
 ```
 
