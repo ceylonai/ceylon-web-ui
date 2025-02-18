@@ -1,3 +1,7 @@
+/*
+ * Copyright 2024-Present, Syigen Ltd. and Syigen Private Limited. All rights reserved.
+ */
+
 "use client"
 
 import type React from "react"
