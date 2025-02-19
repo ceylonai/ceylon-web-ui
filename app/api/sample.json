@@ -1,0 +1,26 @@
+[
+    {
+        "id": "admin-001",
+        "name": "admin",
+        "unitId": "ADM-001",
+        "jobRole": "Administrator",
+        "instructions": "Manage system operations and worker coordination",
+        "profileIcon": ""
+    },
+    {
+        "id": "worker-002",
+        "name": "worker-002",
+        "unitId": "WRK-002",
+        "jobRole": "Analysis",
+        "instructions": "Perform data analysis and reporting",
+        "profileIcon": ""
+    },
+    {
+        "id": "worker-003",
+        "name": "worker_3",
+        "unitId": "WRK-003",
+        "jobRole": "Support",
+        "instructions": "Provide system support and maintenance",
+        "profileIcon": ""
+    }
+]
