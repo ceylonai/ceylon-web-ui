@@ -1,7 +1,6 @@
-from fastapi import APIRouter, status
-from app.models.agent import Agent, AgentCreate
+from fastapi import APIRouter, HTTPException, status
+from app.models.agent import Agent, AgentCreate, AgentUpdate
 import json
-import uuid
 from pathlib import Path
 from typing import List
 
@@ -34,7 +33,33 @@ async def create_agent(agent: AgentCreate):
 async def get_agents():
     return load_agents()
 
+@router.get("/{agent_id}", response_model=Agent)
+async def get_agent(agent_id: str):
+    agents = load_agents()
+    agent = next((a for a in agents if a.id == agent_id), None)
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+    return agent
 
+@router.patch("/{agent_id}", response_model=Agent)
+async def update_agent(agent_id: str, update_data: AgentUpdate):
+    agents = load_agents()
+    for idx, agent in enumerate(agents):
+        if agent.id == agent_id:
+            updated_agent = agent.copy(update=update_data.dict(exclude_unset=True))
+            agents[idx] = updated_agent
+            save_agents(agents)
+            return updated_agent
+    raise HTTPException(status_code=404, detail="Agent not found")
+
+@router.delete("/{agent_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_agent(agent_id: str):
+    agents = load_agents()
+    filtered = [a for a in agents if a.id != agent_id]
+    if len(filtered) == len(agents):
+        raise HTTPException(status_code=404, detail="Agent not found")
+    save_agents(filtered)
+    return None
 
 
 
