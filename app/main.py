@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import socketio
 from ceylon import Worker, AgentDetail, on
-from app.agents.agents import admin, worker_1, worker_2, worker_3
+from app.agents.agents import admin, workers
+from app.controllers.agent_controller import router as agent_router
 
 @dataclasses.dataclass
 class HumanInput:
@@ -36,6 +37,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include agent router
+app.include_router(agent_router)
 
 # Initialize Socket.IO with allowed origins
 sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[
@@ -102,7 +106,7 @@ async def stopped_typing(sid):
 
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(admin.start_agent(b"", [worker_1, worker_2, worker_3, human_interface]))
+    asyncio.create_task(admin.start_agent(b"", workers + [human_interface]))
 
 
 @admin.on_connect("*")
@@ -114,29 +118,6 @@ async def on_connect(topic, agent: AgentDetail):
     await sio.emit("user_joined", {"username": agent.name})
     # Broadcast the message to all connected clients
     await sio.emit("response", {"username": agent.name, "message": f"Agent {agent.name} connected"})
-
-
-@worker_1.on(dict)
-async def on_message_1(data, sender: AgentDetail, time):
-    print(f"Message from {sender.name}  - {data['message']}")
-    await asyncio.sleep(1)
-    if data["message"] == "hello":
-       await sio.emit("response",
-                   {"username": worker_1.details().name,
-                    "message": f'Message From {worker_1.details().name} - "hi there!"'})
-    else :
-        await sio.emit("response",
-                        {"username": worker_1.details().name,
-                        "message": f'Message From {worker_1.details().name} - {data["message"]}'})
-
-@worker_2.on(dict)
-async def on_message_2(data, sender: AgentDetail, time):
-    await asyncio.sleep(2)
-    print(f"Message from {sender.name}  - {data['message']}")
-    # Broadcast the message to all connected clients
-    await sio.emit("response",
-                   {"username": worker_2.details().name,
-                    "message": f'Message From {worker_2.details().name} - {data["message"]}'})
 
 if __name__ == '__main__':
     import uvicorn
