@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import socketio
 from ceylon import Worker, AgentDetail, on
+from app.agents import agents
 from app.agents.agents import admin, workers
 from app.controllers.agent_controller import router as agent_router
 
@@ -106,7 +107,10 @@ async def stopped_typing(sid):
 
 @app.on_event("startup")
 async def startup_event():
+    print("Starting Admin Agent and Workers...")
+    await asyncio.sleep(2)  # Small delay to ensure workers are ready
     asyncio.create_task(admin.start_agent(b"", workers + [human_interface]))
+
 
 
 @admin.on_connect("*")
@@ -118,6 +122,25 @@ async def on_connect(topic, agent: AgentDetail):
     await sio.emit("user_joined", {"username": agent.name})
     # Broadcast the message to all connected clients
     await sio.emit("response", {"username": agent.name, "message": f"Agent {agent.name} connected"})
+
+# Factory function to create unique message handlers for each worker
+
+
+# Register on_message for all workers
+def register_worker_handlers(worker):
+    @worker.on(dict)
+    async def on_message(data, sender: AgentDetail, time):
+        await asyncio.sleep(2)
+        print(f"Message from {sender.name} to {worker.details().name} - {data['message']}")
+        await sio.emit("response", {
+            "username": worker.details().name,
+            "message": f'Message from {worker.details().name} - {data["message"]}'
+        })
+
+# Register handlers for each worker
+for worker in workers:
+    register_worker_handlers(worker)
+
 
 if __name__ == '__main__':
     import uvicorn
