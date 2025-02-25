@@ -96,7 +96,7 @@ const ChatArea: React.FC = () => {
     return (
         <div className=" rounded-lg flex flex-1 flex-col h-full bg-gray-800">
             {/* System Message */}
-            <div className="bg-gray-900 p-4 text-gray-400 flex justify-between items-center rounded-lg">
+            <div className="bg-gray-900 p-4  text-gray-400 flex justify-between items-center rounded-lg">
                 <div className="flex items-center justify-between mb-1">
                     <div className="text-gray-400 flex items-center space-x-2">
                         <span>Active Users -</span>
@@ -114,7 +114,7 @@ const ChatArea: React.FC = () => {
                 {messages.map((msg, index) => (
                     <div
                         key={index}
-                        className={`p-3 rounded-lg max-w-[80%] ${msg.username === username ? "bg-[#2D1B69] ml-auto" : "bg-gray-700"}`}
+                        className={`p-3 rounded-lg max-w-[60%] ${msg.username === username ? "bg-[#2D1B69] ml-auto" : "bg-gray-700"}`}
                     >
                         <div className="text-sm font-semibold text-gray-300">{msg.username}</div>
                         <div className="text-white break-words">{msg.message}</div>
